@@ -4,7 +4,7 @@
 LEVEL_PATH = 'levels/easy.txt'
 
 # Tiles
-EMPTY = '.'
-WALL = '#'
-GUARDIAN = 'G'
-MAC = 'M'
+EMPTY_TILE = '.'
+WALL_TILE = '#'
+GUARDIAN_TILE = 'G'
+MAC_TILE = 'M'
