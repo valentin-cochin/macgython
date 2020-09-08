@@ -1,6 +1,7 @@
 # -*-coding:Utf-8 -*
 # Standard library
 import os
+import random
 
 # Local application/library specific
 from .guardian import Guardian
@@ -16,8 +17,10 @@ class Maze():
         self.empty_paths = []
         self.player = None
         self.guardian = None
+        self.items = []
 
         self.set_grid_from_file()
+        self.put_items_on_grid()
 
         self._max_x, self._max_y = max(self.grid)
 
@@ -56,3 +59,14 @@ class Maze():
                 x += 1
             x = 0
             y += 1
+
+
+    def put_items_on_grid(self):
+        already_taken_position = []
+
+        for char in ITEM_TILES:
+            x, y = random.choice(self.empty_paths)
+            if (x, y) not in already_taken_position:
+                already_taken_position.append((x, y))
+                self.grid[x, y] = char
+                self.items.append((x, y))
