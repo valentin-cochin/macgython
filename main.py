@@ -7,13 +7,14 @@ import os
 import pygame as pg
 
 # Local application/library specific
-import settings
-from mechanics import Maze
+from classes.maze import Maze
 
 
 def main():
     """Launch the program."""
-    maze = Maze.load_from_file(settings.LEVEL_PATH)
+    maze = Maze()
+    print(str(maze))
+    maze.make_move()
     print(str(maze))
 
 

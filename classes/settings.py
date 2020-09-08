@@ -8,3 +8,4 @@ EMPTY_TILE = '.'
 WALL_TILE = '#'
 GUARDIAN_TILE = 'G'
 MAC_TILE = 'M'
+ITEM_TILES = ['A', 'B', 'C']
