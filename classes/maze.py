@@ -12,12 +12,21 @@ from .settings import (EMPTY_TILE, GUARDIAN_TILE, ITEM_TILES, LEVEL_PATH,
 
 
 class Maze():
+
+    directions = {
+        'up': (0, -1),
+        'right': (1, 0),
+        'down': (0, 1),
+        'left': (-1, 0)
+    }
+
     def __init__(self, grid={}):
         self.grid = grid
         self.empty_paths = []
         self.player = None
         self.guardian = None
         self.items = []
+        self.game_is_done = False
 
         self.set_grid_from_file()
         self.put_items_on_grid()
@@ -36,8 +45,21 @@ class Maze():
             char_list.append('\n')
         return ''.join(char_list)
 
-    def make_move(self):
-        self.player.enter_move(self.grid, self.empty_paths)
+    def move_player(self, move):
+        if Maze.directions.get(move) != False:
+            old_position = (self.player.x, self.player.y)
+            mv_x, mv_y = Maze.directions[move]
+            dest_position = (self.player.x + mv_x, self.player.y + mv_y)
+
+            if dest_position in self.empty_paths:
+                if self.grid[dest_position] in ITEM_TILES:
+                    self.player.bag.append(self.grid[dest_position])
+
+                self.grid[old_position] = EMPTY_TILE
+                self.grid[dest_position] = MAC_TILE
+
+            elif self.grid[dest_position] == GUARDIAN_TILE:
+                self.player.alive = False
 
     def set_grid_from_file(self):
         """Set grid, player, guardian and empty_paths using a txt file."""
@@ -65,6 +87,7 @@ class Maze():
         already_taken_position = []
 
         for char in ITEM_TILES:
+            # utiliser boucle while
             x, y = random.choice(self.empty_paths)
             if (x, y) not in already_taken_position:
                 already_taken_position.append((x, y))

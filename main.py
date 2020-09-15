@@ -1,22 +1,13 @@
 # -*-coding:Utf-8 -*
 
-# Standard library
-import os
-
-# Third parties
-import pygame as pg
-
 # Local application/library specific
-from classes.maze import Maze
+from classes.engine import Engine
 
 
 def main():
-    """Launch the program."""
-    maze = Maze()
-    print(str(maze))
-    maze.make_move()
-    print(str(maze))
-
+    """Call the engine to run the software."""
+    engine = Engine()
+    engine.launch()
 
 if __name__ == "__main__":
     main()
