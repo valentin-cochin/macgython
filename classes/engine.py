@@ -7,7 +7,9 @@ import sys
 import pygame as pg
 
 # Local application/library specific
+from .interface import Interface
 from .maze import Maze
+from .settings import SCREEN_SIZE
 
 
 class Engine():
@@ -15,16 +17,25 @@ class Engine():
         pass
 
     def launch(self):
+        """ Main program function."""
         maze = Maze()
-        print(str(maze))
+        interface = Interface()
 
-        while True:
-            move = input() # TODO : Done with pygame
-            maze.move_player(move)
-            print(str(maze))
+        # Initialize Pygame and set up the window
+        pg.init()
+        screen = pg.display.set_mode(SCREEN_SIZE)
+        pg.display.set_caption("My Game")
+        pg.mouse.set_visible(False)
+        clock = pg.time.Clock()
 
-            if maze.game_is_done or move.lower() == 'quit':
-                break
+        done = False
 
-        print('Thanks for playing!')
+        while not done:
+            done, move = interface.process_events()
+            maze.run_logic(move)
+            interface.display_frame(screen)
+            clock.tick(60)  # Pause for the next frame
+
+        # Close window and exit
+        pg.quit()
         sys.exit()

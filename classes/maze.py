@@ -5,8 +5,8 @@ import random
 
 # Local application/library specific
 from .guardian import Guardian
+from .hero import Hero
 from .item import Item
-from .player import Player
 from .settings import (EMPTY_TILE, GUARDIAN_TILE, ITEM_TILES, LEVEL_PATH,
                        MAC_TILE, WALL_TILE)
 
@@ -23,10 +23,11 @@ class Maze():
     def __init__(self, grid={}):
         self.grid = grid
         self.empty_paths = []
-        self.player = None
+        self.Hero = None
         self.guardian = None
         self.items = []
-        self.game_is_done = False
+        self.is_game_over = False
+        self.is_game_won = False
 
         self.set_grid_from_file()
         self.put_items_on_grid()
@@ -45,24 +46,36 @@ class Maze():
             char_list.append('\n')
         return ''.join(char_list)
 
-    def move_player(self, move):
-        if Maze.directions.get(move) != False:
-            old_position = (self.player.x, self.player.y)
+    def move_hero(self, move):
+        if Maze.directions.get(move) != None:
+            old_position = (self.Hero.x, self.Hero.y)
             mv_x, mv_y = Maze.directions[move]
-            dest_position = (self.player.x + mv_x, self.player.y + mv_y)
+            dest_position = (self.Hero.x + mv_x, self.Hero.y + mv_y)
 
             if dest_position in self.empty_paths:
                 if self.grid[dest_position] in ITEM_TILES:
-                    self.player.bag.append(self.grid[dest_position])
+                    self.Hero.bag.append(self.grid[dest_position])
 
                 self.grid[old_position] = EMPTY_TILE
                 self.grid[dest_position] = MAC_TILE
 
             elif self.grid[dest_position] == GUARDIAN_TILE:
-                self.player.alive = False
+                self.Hero.alive = False
+                self.is_game_over = True
+
+    def put_items_on_grid(self):
+        available_xy = self.empty_paths[:]
+
+        for char in ITEM_TILES:
+            item_xy = random.choice(available_xy)
+            if item_xy in available_xy:
+                available_xy.remove(item_xy)
+                item = Item(char, *item_xy)
+                self.items.append(item)
+                self.grid[item_xy] = char
 
     def set_grid_from_file(self):
-        """Set grid, player, guardian and empty_paths using a txt file."""
+        """Set grid, Hero, guardian and empty_paths using a txt file."""
         with open(LEVEL_PATH, "r", encoding="utf-8") as file:
             content = file.read()
 
@@ -75,21 +88,20 @@ class Maze():
                 if char == EMPTY_TILE:
                     self.empty_paths.append((x, y))
                 elif char == MAC_TILE:
-                    self.player = Player(x, y)
+                    self.Hero = Hero(x, y)
                 elif char == GUARDIAN_TILE:
                     self.guardian = Guardian(x, y)
                 x += 1
             x = 0
             y += 1
 
+    def run_logic(self, move):
+        """
+        Updates positions, hero's state.
+        Checks if the game should stop.
+        """
+        done = False
+        self.move_hero(move)
+        done = True if (self.is_game_over or self.is_game_won) else False
 
-    def put_items_on_grid(self):
-        already_taken_position = []
-
-        for char in ITEM_TILES:
-            # utiliser boucle while
-            x, y = random.choice(self.empty_paths)
-            if (x, y) not in already_taken_position:
-                already_taken_position.append((x, y))
-                self.grid[x, y] = char
-                self.items.append((x, y))
+        return done, self.is_game_won
