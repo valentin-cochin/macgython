@@ -8,7 +8,7 @@ class Interface():
     def __init__(self):
         pass
 
-    def display_frame(self, screen):
+    def display_frame(self, screen, maze_grid):
         pass
 
     def process_events(self):
@@ -33,6 +33,7 @@ class Interface():
                     direction = 'left'
         return done, direction
 
+# Pas utiliser  cette classe
 class Block(pg.sprite.Sprite):
     """ This class represents a simple block the player collects. """
     def __init__(self):

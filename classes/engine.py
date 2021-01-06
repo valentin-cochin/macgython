@@ -30,10 +30,13 @@ class Engine():
 
         done = False
 
+        # Faire  une boucle extérieur pour le menu 
+        # interface.display_menu()
+
         while not done:
             done, move = interface.process_events()
-            maze.run_logic(move)
-            interface.display_frame(screen)
+            done, game_won = maze.run_logic(move)
+            interface.display_frame(screen, maze.grid)
             clock.tick(60)  # Pause for the next frame
 
         # Close window and exit
